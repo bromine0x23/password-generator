@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>密码生成器</title>
+	<link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+	<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+	<script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+	<script defer th:src="@{/webjars/font-awesome/js/fontawesome.min.js}"></script>
+	<script defer th:src="@{/webjars/font-awesome/js/solid.min.js}"></script>
+	<script th:inline="javascript">
+		function generatePassword() {
+			$.ajax({
+				method: 'POST',
+				url: /*[[@{/password}]]*/ '/password',
+				contentType: 'application/json; charset=utf-8',
+				data: JSON.stringify({
+					length: $('#length').val(),
+					uppercase: $('#enable-uppercase').is(":checked"),
+					lowercase: $('#enable-lowercase').is(":checked"),
+					digits: $('#enable-digits').is(":checked"),
+					symbols: $('#enable-symbols').is(":checked")
+				})
+			}).done(function (data) {
+				$('#password').val(data);
+			});
+		}
+
+		function copyToClipboard() {
+			$('#password').select();
+			document.execCommand("copy");
+		}
+
+		function preventEvent(event) {
+			event.preventDefault();
+		}
+
+		$(generatePassword);
+		$(function () {
+			$('#password-options').submit(preventEvent);
+		});
+
+		$(function () {
+			$('[data-toggle="tooltip"]').tooltip()
+		})
+	</script>
+</head>
+<body>
+<div class="container">
+	<header class="text-center mt-5">
+		<h1 class="display-4">密码生成器</h1>
+		<p class="lead">立即创建安全、随机生成的密码！</p>
+	</header>
+	<section class="row">
+		<div class="col-8 mx-auto">
+			<form class="form">
+				<div class="input-group mb-3">
+					<label class="sr-only" for="password">Generated Password</label>
+					<input id="password" class="form-control form-control-lg text-monospace rounded-left" name="password"
+						   type="text">
+					<div class="input-group-append">
+						<button id="button-copy" class="btn btn-outline-secondary" type="button" title="复制"
+								onclick="copyToClipboard()"><span class="fas fa-copy"></span></button>
+						<button id="button-redo" class="btn btn-outline-secondary" type="button" title="生成"
+								onclick="generatePassword()"><span class="fas fa-redo"></span></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</section>
+	<section class="row">
+		<div class="col-8 mx-auto">
+			<div class="card border-dark">
+				<h4 class="card-header">
+					自定义您的密码
+				</h4>
+				<div class="card-body">
+					<form id="password-options" class="form align-middle" onchange="generatePassword()">
+						<div class="form-row">
+							<div class="col">
+								<label for="length">密码长度</label>
+								<input id="length" class="form-control form-control-lg password-option" type="number"
+									   name="length" min="1" max="128" value="16">
+							</div>
+							<div class="col">
+								<div class="custom-control custom-switch form-control-lg">
+									<input id="enable-uppercase" class="custom-control-input password-option"
+										   type="checkbox" name="enable-uppercase" checked>
+									<label class="custom-control-label" for="enable-uppercase">大写字母</label>
+								</div>
+								<div class="custom-control custom-switch form-control-lg">
+									<input id="enable-lowercase" class="custom-control-input password-option"
+										   type="checkbox" name="enable-lowercase" checked>
+									<label class="custom-control-label" for="enable-lowercase">小写字母</label>
+								</div>
+								<div class="custom-control custom-switch form-control-lg">
+									<input id="enable-digits" class="custom-control-input password-option"
+										   type="checkbox" name="enable-digits" checked>
+									<label class="custom-control-label" for="enable-digits">数字</label>
+								</div>
+								<div class="custom-control custom-switch form-control-lg">
+									<input id="enable-symbols" class="custom-control-input password-option"
+										   type="checkbox" name="enable-symbols">
+									<label class="custom-control-label" for="enable-symbols">符号 <span
+										class="fas fa-info-circle fa-sm" data-toggle="tooltip" data-placement="right"
+										title="!@#$%^&*"></span></label>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="card-footer">
+					<button class="btn btn-primary btn-lg btn-block" type="button" onclick="copyToClipboard()">复制密码
+					</button>
+				</div>
+			</div>
+		</div>
+	</section>
+</div>
+</body>

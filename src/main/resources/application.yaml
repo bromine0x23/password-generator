@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: password-generator
+
+logging:
+  level:
+    root: info
+    web: debug
+    cn.bromine0x23: debug
